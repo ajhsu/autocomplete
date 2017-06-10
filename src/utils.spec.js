@@ -1,7 +1,7 @@
 var test = require('tape');
 var utils = require('./utils');
 
-test('utils.js', function(t) {
+test('utils - findFirstElement()', function(t) {
   var dic = require('../dictionary.json');
   t.equal(
     utils.findFirstElement(dic.data, 'z'),
@@ -37,6 +37,25 @@ test('utils.js', function(t) {
     utils.findFirstElement(dic.data, 'Zebra', true),
     -1,
     'should not found when case-sensitive is on.'
+  );
+  t.end();
+});
+
+test('utils - getItemsFromArray()', function(t) {
+  t.same(
+    utils.getItemsFromArray([1, 2, 3, 4, 5], 0, 3),
+    [1, 2, 3],
+    'should return expected array elements'
+  );
+  t.same(
+    utils.getItemsFromArray([1, 2, 3, 4, 5], 2, 3),
+    [3, 4, 5],
+    'should return expected array elements'
+  );
+  t.same(
+    utils.getItemsFromArray([1, 2, 3, 4, 5], 2, 5),
+    [3, 4, 5, undefined, undefined],
+    'should return expected array elements'
   );
   t.end();
 });
