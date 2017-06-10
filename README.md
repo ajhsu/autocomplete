@@ -12,6 +12,10 @@
 
 ## To-do list
   - [ ] Design component API
+  - [ ] Develop within a real browser
+  - [ ] Compare with other similars
+  - [ ] Well-documented
+  - [ ] Gif for Demonstration
   - [ ] Something else
 
 ## Similar Components on Internet
