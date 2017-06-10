@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/tape \"./*.spec.js\""
+    "test": "./node_modules/.bin/tape \"./src/*.spec.js\""
   },
   "repository": {
     "type": "git",
