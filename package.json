@@ -1,0 +1,22 @@
+{
+  "name": "autocomplete",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/tape \"./*.spec.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajhsu/autocomplete.git"
+  },
+  "author": "AJ Hsu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ajhsu/autocomplete/issues"
+  },
+  "homepage": "https://github.com/ajhsu/autocomplete#readme",
+  "devDependencies": {
+    "tape": "^4.6.3"
+  }
+}
