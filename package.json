@@ -4,7 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/tape \"./src/*.spec.js\""
+    "test": "./node_modules/.bin/tape \"./src/*.spec.js\"",
+    "clean": "rm -rf dist && mkdir dist",
+    "build:js": "./node_modules/.bin/browserify --standalone \"autocomplete\" \"src/index.js\" -o dist/index.bundle.js",
+    "build:css": "./node_modules/.bin/node-sass src/*.scss dist/index.css",
+    "prebuild": "npm run clean",
+    "build": "npm run build:css && npm run build:js",
+    "format:js": "./node_modules/.bin/prettier src/*.js --write",
+    "format:css": "./node_modules/.bin/prettier src/*.scss --write"
   },
   "repository": {
     "type": "git",
@@ -17,6 +24,9 @@
   },
   "homepage": "https://github.com/ajhsu/autocomplete#readme",
   "devDependencies": {
+    "browserify": "^14.4.0",
+    "node-sass": "^4.5.3",
+    "prettier": "^1.4.4",
     "tape": "^4.6.3"
   }
 }
