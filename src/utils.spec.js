@@ -38,6 +38,26 @@ test('utils - findFirstElement()', function(t) {
     -1,
     'should not found when case-sensitive is on.'
   );
+  t.equal(
+    utils.findFirstElement(dic.data, '', true),
+    -1,
+    'should not found when given text is empty'
+  );
+  t.equal(
+    utils.findFirstElement(dic.data, undefined, true),
+    -1,
+    'should not found when text is not provided'
+  );
+  t.equal(
+    utils.findFirstElement([], 'zebra', true),
+    -1,
+    'should not found when given array is empty'
+  );
+  t.equal(
+    utils.findFirstElement(undefined, 'zebra', true),
+    -1,
+    'should not found when array is not provided'
+  );
   t.end();
 });
 

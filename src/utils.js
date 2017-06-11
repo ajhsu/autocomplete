@@ -3,6 +3,9 @@ module.exports = {
    * Find the first element (partially) matches text from an array
    */
   findFirstElement: function(arr, text, caseSensitive) {
+    if (!arr || arr.length == 0 || !text || text === '') {
+      return -1;
+    }
     var compareLength = text.length;
     for (var arrIter = 0; arrIter < arr.length; arrIter++) {
       // If current item's first letter matches with target's first letter
