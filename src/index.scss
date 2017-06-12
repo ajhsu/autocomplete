@@ -1,0 +1,15 @@
+ul.autocomplete-dropdown {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 132px;
+  border: solid #eee 1px;
+  box-sizing: border-box;
+  li {
+    padding: 0 2px;
+    cursor: default;
+    &.focus {
+      background: #09f;
+    }
+  }
+}

@@ -1,11 +1,14 @@
 <html>
   <head>
-    <script src="./index.js"></script>
+    <script src="dist/index.bundle.js"></script>
+    <link rel="stylesheet" href="dist/index.css"/>
   </head>
   <body>
+    <input id='target'></input>
     <script>
+      var inputElem = document.querySelector('#target');
       var options = {};
-      autocomplete('input#target', options);
+      autocomplete(inputElem, options);
     </script>
   </body>
 </html>
