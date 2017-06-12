@@ -1,8 +1,8 @@
 var dom = {
   createElement: function(tagName, opt) {
     var node = document.createElement(tagName);
-    if (opt.class) node.className = opt.class;
-    if (opt.text) {
+    if (opt && opt.class) node.className = opt.class;
+    if (opt && opt.text) {
       var textNode = document.createTextNode(opt.text);
       node.appendChild(textNode);
     }
