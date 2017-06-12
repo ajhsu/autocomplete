@@ -2,6 +2,7 @@ var test = require('tape');
 var jsdom = require('jsdom');
 var dom = require('./dom-helper');
 
+// Create a browser-like environment for testing
 var htmlString = '<html><body></body></html>';
 jsdom.env(htmlString, function(err, window) {
   // Expose window and document in global environment
@@ -43,6 +44,22 @@ jsdom.env(htmlString, function(err, window) {
     // Setup HTML body
     document.body.innerHTML = '<div class="old"></div>';
 
+    t.throws(
+      function() {
+        dom.insertAfter();
+      },
+      Error,
+      'should throw Error when none of params were given'
+    );
+
+    t.throws(
+      function() {
+        dom.insertAfter(dom.createElement('div', { class: 'new' }));
+      },
+      Error,
+      'should throw Error when reference node was not given'
+    );
+
     dom.insertAfter(
       dom.createElement('div', { class: 'new' }),
       document.querySelector('.old')
@@ -62,6 +79,120 @@ jsdom.env(htmlString, function(err, window) {
       'new',
       'classname of 2nd element should match expected'
     );
+    t.end();
+  });
+  test('dom.renderTo()', function(t) {
+    // Setup HTML body
+    document.body.innerHTML = '<div class="old"></div>';
+
+    t.throws(
+      function() {
+        dom.renderTo();
+      },
+      Error,
+      'should throw Error when none of params were given'
+    );
+
+    t.throws(
+      function() {
+        dom.renderTo(dom.createElement('div', { class: 'new' }));
+      },
+      Error,
+      'should throw Error when old node was not given'
+    );
+
+    dom.renderTo(
+      dom.createElement('div', { class: 'new' }),
+      document.querySelector('.old')
+    );
+    t.equal(
+      document.querySelector('body').childNodes.length,
+      1,
+      'should have one element on page'
+    );
+    t.equal(
+      document.querySelector('body').childNodes[0].className,
+      'new',
+      'classname of 2nd element should match expected'
+    );
+    t.end();
+  });
+  test('dom.getTextNodeFromElement()', function(t) {
+    document.body.innerHTML = '';
+    t.throws(
+      function() {
+        dom.getTextNodeFromElement();
+      },
+      Error,
+      'should throw error when no element was given'
+    );
+    t.equal(
+      dom.getTextNodeFromElement(dom.createElement('div')),
+      '',
+      'should return empty string when given element have no text'
+    );
+    t.equal(
+      dom.getTextNodeFromElement(
+        dom.createElement('div', { text: 'This is a test' })
+      ),
+      'This is a test',
+      'should return expected text value'
+    );
+    t.end();
+  });
+  test('dom.generateUUID()', function(t) {
+    document.body.innerHTML = '';
+    t.equal(dom.generateUUID(), 'e.1');
+    t.equal(dom.generateUUID(), 'e.2');
+    t.equal(dom.generateUUID(), 'e.3');
+    t.end();
+  });
+  test('dom.setElementUUID()', function(t) {
+    document.body.innerHTML = '';
+    var d = dom.createElement('div');
+    // While JSDOM is not support for dataset attribute,
+    // we need to polyfill it manually at the moment.
+    // read more at https://github.com/tmpvar/jsdom/issues/961
+    d.dataset = {};
+    t.throws(
+      function() {
+        dom.setElementUUID();
+      },
+      Error,
+      'should throw error when none of params were given.'
+    );
+    t.throws(
+      function() {
+        dom.setElementUUID(d);
+      },
+      Error,
+      'should throw error when uuid was not given.'
+    );
+    dom.setElementUUID(d, 'uuid-test');
+    t.equal(d.dataset.uuid, 'uuid-test');
+    t.end();
+  });
+  test('dom.getElementUUID()', function(t) {
+    document.body.innerHTML = '';
+    var d = dom.createElement('div');
+    // While JSDOM is not support for dataset attribute,
+    // we need to polyfill it manually at the moment.
+    // read more at https://github.com/tmpvar/jsdom/issues/961
+    d.dataset = {};
+    dom.setElementUUID(d, 'uuid-test');
+    t.equal(dom.getElementUUID(d), 'uuid-test');
+    t.end();
+  });
+  test('dom.autoAttachUUID()', function(t) {
+    document.body.innerHTML = '';
+    var d = dom.createElement('div');
+    // While JSDOM is not support for dataset attribute,
+    // we need to polyfill it manually at the moment.
+    // read more at https://github.com/tmpvar/jsdom/issues/961
+    d.dataset = {};
+    t.equal(dom.getElementUUID(d), undefined);
+    dom.autoAttachUUID(d);
+    t.notEqual(dom.getElementUUID(d), undefined);
     t.end();
   });
 });

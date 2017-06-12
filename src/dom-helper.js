@@ -9,15 +9,18 @@ var dom = {
     return node;
   },
   insertAfter: function(newNode, referenceNode) {
+    if (!newNode) throw new Error('newNode was not given.');
+    if (!referenceNode) throw new Error('newNode was not given.');
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
   },
   renderTo: function(newChild, oldChild) {
+    if (!newChild) throw new Error('newChild was not given.');
+    if (!oldChild) throw new Error('oldChild was not given.');
     oldChild.parentNode.replaceChild(newChild, oldChild);
   },
   getTextNodeFromElement: function(elem) {
     if (!elem) throw new Error('Unable to set UUID, element not exist.');
-    if (!elem.childNodes || elem.childNodes.length <= 0)
-      throw new Error('Unable to get text node.');
+    if (!elem.childNodes || elem.childNodes.length <= 0) return '';
     return elem.childNodes[0].nodeValue;
   },
   /** Generate a UUID for current page */
@@ -32,6 +35,7 @@ var dom = {
     if (!elem) throw new Error('Unable to set UUID, element not exist.');
     if (!elem.dataset)
       throw new Error('Unable to set UUID, element have no dataset attribute.');
+    if (!uuid) throw new Error('Unable to set UUID, uuid was not given.');
     elem.dataset.uuid = uuid;
   },
   /** Get UUID onto element by manual */
