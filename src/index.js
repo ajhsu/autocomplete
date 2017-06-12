@@ -13,12 +13,13 @@
     * How to search within options efficiently?
   * (Performance) Avoiding memory consuming for long-time usage
     * How to minimize memory usage?
+    - Avoiding reference to dom nodes, trying to use uuid instead (like reactid)
 */
 var entries = require('../dictionary.json').data;
 var utils = require('./utils');
 var dom = require('./dom-helper');
 
-var autocomplete = function(inputElem) {
+var autocomplete = function(container) {
   /* 
     Expected flow:
     * Get input DOM element
@@ -30,7 +31,71 @@ var autocomplete = function(inputElem) {
     Besides:
     * Should be work both on mouse and keyboard
   */
+  var state = {
+    tags: []
+  };
+  var createRootContainer = function() {
+    var divNode = dom.createElement('div', {
+      class: 'autocomplete-root-container'
+    });
+    return divNode;
+  };
+  var createTagsContainer = function() {
+    var ulNode = dom.createElement('ul', {
+      class: 'autocomplete-tags-container'
+    });
+    return ulNode;
+  };
+  var createTag = function(text) {
+    var createCloseButton = function() {
+      var buttonNode = dom.createElement('button', {
+        class: 'autocomplete-tag-close-button',
+        text: 'X'
+      });
+      return buttonNode;
+    };
+    var liNode = dom.createElement('li', {
+      class: 'autocomplete-tag',
+      text: text || ''
+    });
+    var uuid = dom.autoAttachUUID(liNode);
+    var closeButtonNode = createCloseButton();
+    // Close button's onClick event handler
+    closeButtonNode.addEventListener('click', function(event) {
+      dom.removeElementByUUID(uuid);
+      // Remove UUID from state
+      var tagIdx = state.tags.indexOf(uuid);
+      if (tagIdx >= 0) state.tags.splice(tagIdx, 1);
+    });
+    liNode.appendChild(closeButtonNode);
+    return liNode;
+  };
+  var createInputBox = function() {
+    var inputNode = dom.createElement('input', {
+      class: 'autocomplete-input'
+    });
+    return inputNode;
+  };
+  var addTag = function(tagNode) {
+    // Push UUID into state
+    state.tags.push(dom.getElementUUID(tagNode));
+    tagsContainerNode.appendChild(tagNode);
+  };
 
+  var rootContainerNode = createRootContainer();
+  var tagsContainerNode = createTagsContainer();
+  var inputNode = createInputBox();
+
+  rootContainerNode.appendChild(tagsContainerNode);
+  rootContainerNode.appendChild(inputNode);
+
+  // Extend input click area to entire root-container
+  rootContainerNode.addEventListener('click', function(event) {
+    if (event.target == this) {
+      // Focus on inputbox when click hits on rootContainer
+      inputNode.focus();
+    }
+  });
   var createDropdown = function(items, options) {
     var dropdownInstance = {
       state: {
@@ -38,8 +103,9 @@ var autocomplete = function(inputElem) {
       }
     };
 
-    var ulNode = document.createElement('ul');
-    ulNode.className = 'autocomplete-dropdown';
+    var ulNode = dom.createElement('ul', {
+      class: 'autocomplete-dropdown'
+    });
     ulNode.style.display = 'none';
 
     var show = function() {
@@ -47,6 +113,9 @@ var autocomplete = function(inputElem) {
     };
     var hide = function() {
       ulNode.style.display = 'none';
+    };
+    var reset = function() {
+      dropdownInstance.state.indexOfFocusItem = -1;
     };
     var moveFocusTo = function(itemIdex) {};
     var renderTo = function(refContainer) {
@@ -60,14 +129,16 @@ var autocomplete = function(inputElem) {
       if (!items) return;
       // Remove all existing li nodes
       ulNode.innerHTML = '';
+      var buffer = document.createDocumentFragment();
       for (var c = 0; c < items.length; c++) {
-        var liNode = document.createElement('li');
-        var liContent = document.createTextNode(items[c]);
-        liNode.appendChild(liContent);
+        var liNode = dom.createElement('li', {
+          text: items[c]
+        });
         liNode.addEventListener('mouseover', function(event) {});
         liNode.addEventListener('mouseout', function(event) {});
-        ulNode.appendChild(liNode);
+        buffer.appendChild(liNode);
       }
+      ulNode.appendChild(buffer);
     };
     var onSelectItem = function() {};
     var renderFocus = function() {
@@ -96,26 +167,30 @@ var autocomplete = function(inputElem) {
       }
       renderFocus();
     };
+    var getCurrentItem = function() {
+      return ulNode.children[dropdownInstance.state.indexOfFocusItem];
+    };
 
     updateItems(items);
 
     dropdownInstance.show = show;
     dropdownInstance.hide = hide;
+    dropdownInstance.reset = reset;
     dropdownInstance.moveFocusTo = moveFocusTo;
     dropdownInstance.renderTo = renderTo;
     dropdownInstance.updateItems = updateItems;
     dropdownInstance.onSelectItem = onSelectItem;
     dropdownInstance.moveToNextItem = moveToNextItem;
     dropdownInstance.moveToPreviousItem = moveToPreviousItem;
+    dropdownInstance.getCurrentItem = getCurrentItem;
     return dropdownInstance;
   };
 
   // Create dropdown menu
   var dropdown = createDropdown();
-  // Render dropdown to the input element
-  dropdown.renderTo(inputElem);
 
-  var typingCallback = function(event) {
+  // Listen to input box's input event for typing callback
+  inputNode.addEventListener('input', function(event) {
     var text = event.currentTarget.value;
     if (text === '') {
       dropdown.hide();
@@ -127,8 +202,9 @@ var autocomplete = function(inputElem) {
       dropdown.updateItems(itemsToShow);
       dropdown.show();
     }
-  };
-  var functionalKeyCallback = function(event) {
+  });
+  // Listen to input box's keydown event for functional keys
+  inputNode.addEventListener('keydown', function(event) {
     switch (event.code) {
       case 'ArrowDown':
         dropdown.moveToNextItem();
@@ -140,14 +216,36 @@ var autocomplete = function(inputElem) {
         dropdown.hide();
         break;
       case 'Enter':
+        // Add new tag
+        var itemText = dom.getTextNodeFromElement(dropdown.getCurrentItem());
+        addTag(createTag(itemText));
+        // Clean up inputbox
+        inputNode.value = '';
+        // Reset dropdown menu
+        dropdown.hide();
+        dropdown.reset();
         break;
     }
-  };
+  });
 
-  // Listen to input box's input event for typing callback
-  inputElem.addEventListener('input', typingCallback);
-  // Listen to input box's keydown event for functional keys
-  inputElem.addEventListener('keydown', functionalKeyCallback);
+  // Sample tags
+  addTag(createTag('Apple'));
+  addTag(createTag('Banana'));
+  addTag(createTag('Candy'));
+
+  // Replace target container with a brand new root-container
+  dom.renderTo(rootContainerNode, container);
+  // Render dropdown to the input element
+  dropdown.renderTo(rootContainerNode);
+
+  return {
+    /** Return current tags label */
+    getTags: function() {
+      return state.tags.map(function(uuid) {
+        return dom.getTextNodeFromElement(dom.findElementByUUID(uuid));
+      });
+    }
+  };
 };
 
 module.exports = autocomplete;
