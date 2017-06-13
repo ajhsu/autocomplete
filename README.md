@@ -1,22 +1,29 @@
 # Auto-Complete Component
 
+An auto-complete component with zero dependency, built in plain javascript.
+
 [![Build status][travis-image]][travis-url]
 [![License][license-image]][license-url]
 
-## Features
-  * Zero dependency, the component was built in pure javascript.
-  * Responsive with desktop, tablet and mobile touch devices.
-  * Semantic HTML constructed which means it's a highly adjustable styling component
-
 ## Usage
+```html
+<body>
+  <script src="dist/index.bundle.js"></script>
+  <link rel="stylesheet" href="dist/index.css"/>
+  <input id="main"></input>
+  <script>
+    var container = document.querySelector('#target');
+    var options = {};
+    var instance = autocomplete(container, options);  
+  </script>
+</body>
+```
 
 ## To-do list
   - [ ] Design component API
-  - [ ] Develop within a real browser
   - [ ] Compare with other similars
   - [ ] Well-documented
   - [ ] Gif for Demonstration
-  - [ ] Something else
 
 ## Similar Components on Internet
  * GitHub's repository topic editor
