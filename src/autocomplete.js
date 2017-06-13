@@ -14,7 +14,7 @@ function AutoComplete(container, entries, opt) {
   // Internal option object
   this._opt = {
     searchResultsToShow: (opt && opt.searchResultsToShow) || 5,
-    onTagsUpdate: opt && opt.onTagsUpdate
+    onTagsUpdate: (opt && opt.onTagsUpdate) || function() {}
   };
   // Internal state object
   this._state = {
