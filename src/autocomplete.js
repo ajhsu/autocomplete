@@ -1,10 +1,15 @@
-var entries = require('../dictionary.json').data;
 var utils = require('./utils');
 var dom = require('./dom-helper');
 var Dropdown = require('./dropdown');
 
-function AutoComplete(container, opt) {
+function AutoComplete(container, entries, opt) {
   var self = this;
+
+  // Check params at first
+  if (!container)
+    throw new Error('You must assign an element to render on page!');
+  if (!entries || entries.length === 0)
+    throw new Error('Entries must be an non-empty array!');
 
   // Internal option object
   this._opt = {
@@ -13,8 +18,10 @@ function AutoComplete(container, opt) {
   };
   // Internal state object
   this._state = {
-    tags: []
+    tags: [],
+    entries: entries
   };
+  // Interval DOM references
   this.dom = {
     rootContainerNode: this._createRootContainer(),
     tagsContainerNode: this._createTagsContainer(),
@@ -34,7 +41,6 @@ function AutoComplete(container, opt) {
 
   // Replace target container with a brand new root-container
   dom.renderTo(this.dom.rootContainerNode, container);
-
   // Render dropdown to the input element
   this.dropdown.renderTo(this.dom.rootContainerNode);
 }
@@ -56,10 +62,10 @@ AutoComplete.prototype._initializeEventHandlers = function() {
       self.dropdown.hide();
       return;
     }
-    var firstIndex = utils.findFirstElement(entries, text);
+    var firstIndex = utils.findFirstElement(self._state.entries, text);
     if (firstIndex >= 0) {
       var itemsToShow = utils.getItemsFromArray(
-        entries,
+        self._state.entries,
         firstIndex,
         self._opt.searchResultsToShow
       );
