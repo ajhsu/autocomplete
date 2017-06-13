@@ -10,17 +10,20 @@
   <h1>AutoComplete component demonstration</h1>
   <input id="target"></input>
   <h2>Selected Tags</h2>
-  <div id="result"></div>
+  <div id="result">There has no tags selected yet.</div>
   <script>
     var container = document.querySelector('#target');
-    var options = {
+    var elem = new AutoComplete(container, dictionary, {
       searchResultsToShow: 10,
-      onTagsUpdate: function (tags) {
-        var text = tags ? tags.join(', ') : 'There has no tags selected yet.';
-        document.getElementById('result').innerText = text;
-      }
-    };
-    var elem = new AutoComplete(container, dictionary, options);
+      onTagsUpdate: onTagsUpdateHandler
+    });
+
+    function onTagsUpdateHandler(tags) {
+      var text = tags && tags.length > 0
+        ? tags.join(', ')
+        : 'There has no tags selected yet.';
+      document.getElementById('result').innerText = text;
+    }
   </script>
 </body>
 
