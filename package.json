@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/tape \"./src/*.spec.js\"",
+    "test": "node src/index.spec.js",
     "clean": "rm -rf dist && mkdir dist",
     "build:js": "./node_modules/.bin/browserify --standalone \"AutoComplete\" \"src/index.js\" -o dist/index.bundle.js",
     "build:css": "./node_modules/.bin/node-sass src/*.scss dist/index.css",
