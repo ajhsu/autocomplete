@@ -6,6 +6,11 @@ var Dropdown = require('./dropdown');
 function AutoComplete(container, opt) {
   var self = this;
 
+  // Internal option object
+  this._opt = {
+    searchResultsToShow: (opt && opt.searchResultsToShow) || 5
+  };
+  // Internal state object
   this._state = {
     tags: []
   };
@@ -52,7 +57,11 @@ AutoComplete.prototype._initializeEventHandlers = function() {
     }
     var firstIndex = utils.findFirstElement(entries, text);
     if (firstIndex >= 0) {
-      var itemsToShow = utils.getItemsFromArray(entries, firstIndex, 25);
+      var itemsToShow = utils.getItemsFromArray(
+        entries,
+        firstIndex,
+        self._opt.searchResultsToShow
+      );
       self.dropdown.updateItems(itemsToShow);
       self.dropdown.show();
     }

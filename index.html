@@ -7,7 +7,9 @@
     <input id='target'></input>
     <script>
       var container = document.querySelector('#target');
-      var options = {};
+      var options = {
+        searchResultsToShow: 10
+      };
       var elem = new AutoComplete(container, options);
     </script>
   </body>
