@@ -1,6 +1,9 @@
 var dom = require('./dom-helper');
 
 function Dropdown(items, opt) {
+  this._opt = {
+    onItemClick: (opt && opt.onItemClick) || null
+  };
   this._state = {
     indexOfFocusItem: -1,
     countOfItems: 0
@@ -38,6 +41,7 @@ Dropdown.prototype.renderTo = function(refContainer) {
   dom.insertAfter(this.dom.ul, refContainer);
 };
 Dropdown.prototype.updateItems = function(items) {
+  var self = this;
   // TODO: How to reuse liNodes?
   // TODO: How to create liNode in memory at first?
   if (!items) return;
@@ -51,21 +55,21 @@ Dropdown.prototype.updateItems = function(items) {
     dom.setElementUUID(liNode, 'm.' + c);
     // Event handlers for mouse pointer
     liNode.addEventListener('mouseover', function(event) {
-      var self = event.currentTarget;
-      var uuid = dom.getElementUUID(self);
+      var target = event.currentTarget;
+      var uuid = dom.getElementUUID(target);
       var index = parseInt(uuid.split('.')[1]);
-      this._state.indexOfFocusItem = index;
-      this._renderFocus();
+      self._state.indexOfFocusItem = index;
+      self._renderFocus();
     });
     liNode.addEventListener('mouseout', function(event) {
-      this._state.indexOfFocusItem = -1;
-      this._renderFocus();
+      self._state.indexOfFocusItem = -1;
+      self._renderFocus();
     });
     liNode.addEventListener('click', function(event) {
-      if (opt && opt.onItemClick) {
-        var item = getCurrentItem();
-        opt.onItemClick({
-          index: this._state.indexOfFocusItem,
+      if (self._opt.onItemClick) {
+        var item = self.getCurrentItem();
+        self._opt.onItemClick({
+          index: self._state.indexOfFocusItem,
           elem: item,
           value: dom.getTextNodeFromElement(item)
         });
