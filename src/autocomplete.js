@@ -8,7 +8,8 @@ function AutoComplete(container, opt) {
 
   // Internal option object
   this._opt = {
-    searchResultsToShow: (opt && opt.searchResultsToShow) || 5
+    searchResultsToShow: (opt && opt.searchResultsToShow) || 5,
+    onTagsUpdate: opt && opt.onTagsUpdate
   };
   // Internal state object
   this._state = {
@@ -122,6 +123,8 @@ AutoComplete.prototype._createTag = function(text) {
     // Remove UUID from state
     var tagIdx = self._state.tags.indexOf(uuid);
     if (tagIdx >= 0) self._state.tags.splice(tagIdx, 1);
+    // Invoke onTagsUpdate callback
+    self._onTagsUpdate();
   });
   liNode.appendChild(closeButtonNode);
   return liNode;
@@ -136,6 +139,8 @@ AutoComplete.prototype._addTag = function(tagNode) {
   // Push UUID into state
   this._state.tags.push(dom.getElementUUID(tagNode));
   this.dom.tagsContainerNode.appendChild(tagNode);
+  // Invoke onTagsUpdate callback
+  this._onTagsUpdate();
 };
 AutoComplete.prototype._onTagSelect = function(itemText) {
   this._addTag(this._createTag(itemText));
@@ -150,5 +155,9 @@ AutoComplete.prototype.getTags = function() {
   return this._state.tags.map(function(uuid) {
     return dom.getTextNodeFromElement(dom.findElementByUUID(uuid));
   });
+};
+AutoComplete.prototype._onTagsUpdate = function() {
+  var tags = this.getTags();
+  this._opt.onTagsUpdate.call(this, tags);
 };
 module.exports = AutoComplete;
