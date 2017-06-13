@@ -6,7 +6,7 @@
   "scripts": {
     "test": "./node_modules/.bin/tape \"./src/*.spec.js\"",
     "clean": "rm -rf dist && mkdir dist",
-    "build:js": "./node_modules/.bin/browserify --standalone \"autocomplete\" \"src/index.js\" -o dist/index.bundle.js",
+    "build:js": "./node_modules/.bin/browserify --standalone \"AutoComplete\" \"src/index.js\" -o dist/index.bundle.js",
     "build:css": "./node_modules/.bin/node-sass src/*.scss dist/index.css",
     "prebuild": "npm run clean",
     "build": "npm run build:css && npm run build:js",
