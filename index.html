@@ -1,16 +1,26 @@
 <html>
-  <head>
-    <script src="dist/index.bundle.js"></script>
-    <link rel="stylesheet" href="dist/index.css"/>
-  </head>
-  <body>
-    <input id='target'></input>
-    <script>
-      var container = document.querySelector('#target');
-      var options = {
-        searchResultsToShow: 10
-      };
-      var elem = new AutoComplete(container, options);
-    </script>
-  </body>
+
+<head>
+  <script src="dist/index.bundle.js"></script>
+  <link rel="stylesheet" href="dist/index.css" />
+</head>
+
+<body>
+  <h1>AutoComplete component demonstration</h1>
+  <input id="target"></input>
+  <h2>Selected Tags</h2>
+  <div id="result"></div>
+  <script>
+    var container = document.querySelector('#target');
+    var options = {
+      searchResultsToShow: 10,
+      onTagsUpdate: function (tags) {
+        var text = tags ? tags.join(', ') : 'There has no tags selected yet.';
+        document.getElementById('result').innerText = text;
+      }
+    };
+    var elem = new AutoComplete(container, options);
+  </script>
+</body>
+
 </html>

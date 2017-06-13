@@ -1,4 +1,7 @@
 ul.autocomplete-dropdown {
+  position: absolute;
+  z-index: 1000;
+  background: white;
   list-style-type: none;
   padding: 0;
   margin: -1px 0 0 0;
