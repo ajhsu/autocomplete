@@ -1,6 +1,6 @@
 # Auto-Complete Component
 
-An auto-complete component with zero dependency, built in plain javascript.
+An auto-complete tagging input with zero dependency, built in plain javascript.
 
 [![Build status][travis-image]][travis-url]
 [![License][license-image]][license-url]

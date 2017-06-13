@@ -1,8 +1,8 @@
 {
-  "name": "autocomplete",
+  "name": "tag-autocomplete",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "An auto-complete tagging input with zero dependency, built in plain javascript.",
+  "main": "dist/index.min.js",
   "scripts": {
     "test": "node src/index.spec.js",
     "clean": "rm -rf dist && mkdir dist",
