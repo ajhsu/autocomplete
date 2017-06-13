@@ -5,6 +5,9 @@ An auto-complete component with zero dependency, built in plain javascript.
 [![Build status][travis-image]][travis-url]
 [![License][license-image]][license-url]
 
+## Demo
+https://ajhsu.github.io/autocomplete/
+
 ## Usage
 ```html
 <body>
