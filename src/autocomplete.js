@@ -51,11 +51,15 @@ AutoComplete.prototype._initializeEventHandlers = function() {
   // Listen to input box's input event for typing callback
   this.dom.inputNode.addEventListener('input', function(event) {
     var text = event.currentTarget.value;
+    // Reset the dropdown focus when typing
     self.dropdown.reset();
+    // Collapse dropdown when text is emptied
     if (text === '') {
       self.dropdown.hide();
       return;
     }
+    // Search for the index of first matches,
+    // then render into dropdown items
     var firstIndex = utils.findFirstElement(self._state.entries, text);
     if (firstIndex >= 0) {
       var itemsToShow = utils.getItemsFromArray(
