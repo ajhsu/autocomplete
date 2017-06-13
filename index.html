@@ -1,30 +1,34 @@
 <html>
+  <head>
+    <script src="dictionary.js"></script>
+    <script src="dist/index.bundle.js"></script>
+    <link rel="stylesheet" href="dist/index.css" />
+  </head>
+  <body>
+    <h1>
+      AutoComplete component demonstration
+    </h1>
+    <input id="target"></input>
+    <h2>
+      Selected Tags
+    </h2>
+    <div id="result">
+      There has no tags selected yet.
+    </div>
+    <script>
+      var container = document.querySelector('#target');
+      
+      var elem = new AutoComplete(container, dictionary, {
+        searchResultsToShow: 10,
+        onTagsUpdate: onTagsUpdateHandler
+      });
 
-<head>
-  <script src="dictionary.js"></script>
-  <script src="dist/index.bundle.js"></script>
-  <link rel="stylesheet" href="dist/index.css" />
-</head>
-
-<body>
-  <h1>AutoComplete component demonstration</h1>
-  <input id="target"></input>
-  <h2>Selected Tags</h2>
-  <div id="result">There has no tags selected yet.</div>
-  <script>
-    var container = document.querySelector('#target');
-    var elem = new AutoComplete(container, dictionary, {
-      searchResultsToShow: 10,
-      onTagsUpdate: onTagsUpdateHandler
-    });
-
-    function onTagsUpdateHandler(tags) {
-      var text = tags && tags.length > 0
-        ? tags.join(', ')
-        : 'There has no tags selected yet.';
-      document.getElementById('result').innerText = text;
-    }
-  </script>
-</body>
-
+      function onTagsUpdateHandler(tags) {
+        var text = tags && tags.length > 0
+          ? tags.join(', ')
+          : 'There has no tags selected yet.';
+        document.getElementById('result').innerText = text;
+      }
+    </script>
+  </body>
 </html>
