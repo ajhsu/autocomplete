@@ -17,7 +17,8 @@ function AutoComplete(container, dataset, opt) {
   // Internal state object
   this._state = {
     tags: [],
-    dataset: dataset
+    // Make a copy of dataset because we'll sort it in order
+    dataset: dataset.slice().sort()
   };
   // Interval DOM references
   this.dom = {
