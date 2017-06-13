@@ -1,6 +1,7 @@
 <html>
 
 <head>
+  <script src="dictionary.js"></script>
   <script src="dist/index.bundle.js"></script>
   <link rel="stylesheet" href="dist/index.css" />
 </head>
@@ -19,7 +20,7 @@
         document.getElementById('result').innerText = text;
       }
     };
-    var elem = new AutoComplete(container, options);
+    var elem = new AutoComplete(container, dictionary, options);
   </script>
 </body>
 
