@@ -8,10 +8,10 @@ An auto-complete component with zero dependency, built in plain javascript.
 ## Demo
 https://ajhsu.github.io/autocomplete/
 
-## Usage
+## Example
 ```html
 <body>
-  <script src="dist/index.bundle.js"></script>
+  <script src="dist/index.min.js"></script>
   <link rel="stylesheet" href="dist/index.css"/>
   <input id="main"></input>
   <script>
@@ -19,14 +19,32 @@ https://ajhsu.github.io/autocomplete/
     var options = {
       searchResultsToShow: 10
     };
-    var instance = autocomplete(container, options);  
+    var instance = new AutoComplete(container, options);  
   </script>
 </body>
 ```
 
-## To-do list
-  - [ ] Design component API
-  - [ ] Well-documented
+## API
+
+### `new AutoComplete(container, dataset, [options]);`
+
+Create an auto-complete component and render on given container.
+
+#### container
+
+Type: `HTMLElement`
+
+An existing element for rendering auto-complete component on page.
+
+#### dataset
+
+Type: `Array`
+
+A non-empty JavaScript that contains a set of data can be searched by auto-completion.
+
+#### options
+ * `searchResultsToShow` - ***Integer***, determine how many of search result you'd like to show.
+ * `onTagsUpdate` - ***Function***, which will invoked when tag updates.
 
 ## Similar Components on Internet
  * GitHub's repository topic editor
@@ -36,3 +54,7 @@ https://ajhsu.github.io/autocomplete/
 [travis-url]: https://travis-ci.org/ajhsu/autocomplete
 [license-image]: https://img.shields.io/github/license/ajhsu/autocomplete.svg
 [license-url]: LICENSE
+
+## License
+
+[MIT](LICENSE)
