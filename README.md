@@ -16,7 +16,9 @@ https://ajhsu.github.io/autocomplete/
   <input id="main"></input>
   <script>
     var container = document.querySelector('#target');
-    var options = {};
+    var options = {
+      searchResultsToShow: 10
+    };
     var instance = autocomplete(container, options);  
   </script>
 </body>
@@ -24,9 +26,7 @@ https://ajhsu.github.io/autocomplete/
 
 ## To-do list
   - [ ] Design component API
-  - [ ] Compare with other similars
   - [ ] Well-documented
-  - [ ] Gif for Demonstration
 
 ## Similar Components on Internet
  * GitHub's repository topic editor
