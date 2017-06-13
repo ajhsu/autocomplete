@@ -73,7 +73,7 @@ AutoComplete.prototype._initializeEventHandlers = function() {
         self.dropdown.moveToNextItem();
         break;
       case 'ArrowUp':
-        self.dropdown.moveToPreviousItem();
+        self.dropdown.moveToPrevItem();
         break;
       case 'Escape':
         self.dropdown.hide();
