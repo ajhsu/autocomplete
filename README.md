@@ -18,10 +18,11 @@ https://ajhsu.github.io/autocomplete/
   <input id="main"></input>
   <script>
     var container = document.querySelector('#target');
+    var dataset = [...];
     var options = {
       searchResultsToShow: 10
     };
-    var instance = new AutoComplete(container, options);  
+    var instance = new AutoComplete(container, dataset, options);  
   </script>
 </body>
 ```
