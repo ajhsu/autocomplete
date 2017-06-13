@@ -2,49 +2,49 @@ var test = require('tape');
 var utils = require('./utils');
 
 test('utils - findFirstElement()', function(t) {
-  var dic = require('../dictionary.json');
+  var dic = ['z', 'ze', 'zeb', 'zebr', 'zebra'];
   t.equal(
-    utils.findFirstElement(dic.data, 'z'),
-    368711,
+    utils.findFirstElement(dic, 'z'),
+    0,
     'should found index of first matches'
   );
   t.equal(
-    utils.findFirstElement(dic.data, 'ze'),
-    368932,
+    utils.findFirstElement(dic, 'ze'),
+    1,
     'should found index of first matches'
   );
   t.equal(
-    utils.findFirstElement(dic.data, 'zeb'),
-    368958,
+    utils.findFirstElement(dic, 'zeb'),
+    2,
     'should found index of first matches'
   );
   t.equal(
-    utils.findFirstElement(dic.data, 'zebr'),
-    368963,
+    utils.findFirstElement(dic, 'zebr'),
+    3,
     'should found index of first matches'
   );
   t.equal(
-    utils.findFirstElement(dic.data, 'zebra'),
-    368963,
+    utils.findFirstElement(dic, 'zebra'),
+    4,
     'should found index of first matches'
   );
   t.equal(
-    utils.findFirstElement(dic.data, 'zzzzzzzzzzzzzzzzzzzzebra'),
+    utils.findFirstElement(dic, 'zzzzzzzzzzzzzzzzzzzzebra'),
     -1,
     'should not throw exception when target text length is larger than any words in dictionary.'
   );
   t.equal(
-    utils.findFirstElement(dic.data, 'Zebra', true),
+    utils.findFirstElement(dic, 'Zebra', true),
     -1,
     'should not found when case-sensitive is on.'
   );
   t.equal(
-    utils.findFirstElement(dic.data, '', true),
+    utils.findFirstElement(dic, '', true),
     -1,
     'should not found when given text is empty'
   );
   t.equal(
-    utils.findFirstElement(dic.data, undefined, true),
+    utils.findFirstElement(dic, undefined, true),
     -1,
     'should not found when text is not provided'
   );
