@@ -2,13 +2,13 @@ var utils = require('./utils');
 var dom = require('./dom-helper');
 var Dropdown = require('./dropdown');
 
-function AutoComplete(container, entries, opt) {
+function AutoComplete(container, dataset, opt) {
   var self = this;
   // Check params at first
   if (!container)
     throw new Error('You must assign an element to render on page!');
-  if (!entries || entries.length === 0)
-    throw new Error('Entries must be an non-empty array!');
+  if (!dataset || dataset.length === 0)
+    throw new Error('dataset must be an non-empty array!');
   // Internal option object
   this._opt = {
     searchResultsToShow: (opt && opt.searchResultsToShow) || 5,
@@ -17,7 +17,7 @@ function AutoComplete(container, entries, opt) {
   // Internal state object
   this._state = {
     tags: [],
-    entries: entries
+    dataset: dataset
   };
   // Interval DOM references
   this.dom = {
@@ -60,10 +60,10 @@ AutoComplete.prototype._initializeEventHandlers = function() {
     }
     // Search for the index of first matches,
     // then render into dropdown items
-    var firstIndex = utils.findFirstElement(self._state.entries, text);
+    var firstIndex = utils.findFirstElement(self._state.dataset, text);
     if (firstIndex >= 0) {
       var itemsToShow = utils.getItemsFromArray(
-        self._state.entries,
+        self._state.dataset,
         firstIndex,
         self._opt.searchResultsToShow
       );
