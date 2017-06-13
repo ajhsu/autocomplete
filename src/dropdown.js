@@ -1,13 +1,16 @@
 var dom = require('./dom-helper');
 
 function Dropdown(items, opt) {
+  // Internal option object
   this._opt = {
     onItemClick: (opt && opt.onItemClick) || null
   };
+  // Internal state object
   this._state = {
     indexOfFocusItem: -1,
     countOfItems: 0
   };
+  // Interval DOM references
   this.dom = {
     ul: dom.createElement('ul', {
       class: 'autocomplete-dropdown'
@@ -25,7 +28,6 @@ Dropdown.prototype._renderFocus = function() {
     }
   }
 };
-
 Dropdown.prototype.show = function() {
   this.dom.ul.style.display = 'block';
 };

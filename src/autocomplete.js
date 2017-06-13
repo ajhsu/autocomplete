@@ -4,13 +4,11 @@ var Dropdown = require('./dropdown');
 
 function AutoComplete(container, entries, opt) {
   var self = this;
-
   // Check params at first
   if (!container)
     throw new Error('You must assign an element to render on page!');
   if (!entries || entries.length === 0)
     throw new Error('Entries must be an non-empty array!');
-
   // Internal option object
   this._opt = {
     searchResultsToShow: (opt && opt.searchResultsToShow) || 5,
@@ -29,16 +27,13 @@ function AutoComplete(container, entries, opt) {
   };
   this.dom.rootContainerNode.appendChild(this.dom.tagsContainerNode);
   this.dom.rootContainerNode.appendChild(this.dom.inputNode);
-
   // Create dropdown menu
   this.dropdown = new Dropdown([], {
     onItemClick: function(item) {
       self._onTagSelect(item.value);
     }
   });
-
   this._initializeEventHandlers();
-
   // Replace target container with a brand new root-container
   dom.renderTo(this.dom.rootContainerNode, container);
   // Render dropdown to the input element
@@ -46,7 +41,6 @@ function AutoComplete(container, entries, opt) {
 }
 AutoComplete.prototype._initializeEventHandlers = function() {
   var self = this;
-
   // Extend input click area to entire root-container
   this.dom.rootContainerNode.addEventListener('click', function(event) {
     if (event.target == this) {
@@ -54,7 +48,6 @@ AutoComplete.prototype._initializeEventHandlers = function() {
       self.dom.inputNode.focus();
     }
   });
-
   // Listen to input box's input event for typing callback
   this.dom.inputNode.addEventListener('input', function(event) {
     var text = event.currentTarget.value;
@@ -156,14 +149,13 @@ AutoComplete.prototype._onTagSelect = function(itemText) {
   this.dropdown.hide();
   this.dropdown.reset();
 };
-/** Return current tags label */
+AutoComplete.prototype._onTagsUpdate = function() {
+  var tags = this.getTags();
+  this._opt.onTagsUpdate.call(this, tags);
+};
 AutoComplete.prototype.getTags = function() {
   return this._state.tags.map(function(uuid) {
     return dom.getTextNodeFromElement(dom.findElementByUUID(uuid));
   });
-};
-AutoComplete.prototype._onTagsUpdate = function() {
-  var tags = this.getTags();
-  this._opt.onTagsUpdate.call(this, tags);
 };
 module.exports = AutoComplete;
