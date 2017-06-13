@@ -195,4 +195,37 @@ jsdom.env(htmlString, function(err, window) {
     t.notEqual(dom.getElementUUID(d), undefined);
     t.end();
   });
+  test('dom.findElementByUUID()', function(t) {
+    document.body.innerHTML = '';
+    var d = dom.createElement('div');
+    dom.setElementUUID(d, 'uuid-find-test');
+    document.body.appendChild(d);
+    t.true(
+      dom.findElementByUUID('uuid-find-test') instanceof HTMLDivElement,
+      'findElementByUUID should return a HTMLDivElement when found matches'
+    );
+    t.equal(
+      dom.findElementByUUID('uuid-not-found-test'),
+      null,
+      'findElementByUUID should return null when not found'
+    );
+    t.end();
+  });
+  test('dom.removeElementByUUID()', function(t) {
+    document.body.innerHTML = '';
+    var d = dom.createElement('div');
+    dom.setElementUUID(d, 'uuid-remove-test');
+    document.body.appendChild(d);
+    t.true(
+      dom.findElementByUUID('uuid-remove-test') instanceof HTMLDivElement,
+      'findElementByUUID should return a HTMLDivElement before we removed it'
+    );
+    dom.removeElementByUUID('uuid-remove-test');
+    t.equal(
+      dom.findElementByUUID('uuid-remove-test'),
+      null,
+      'findElementByUUID should return null when we removed it'
+    );
+    t.end();
+  });
 });
