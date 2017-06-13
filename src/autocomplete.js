@@ -51,6 +51,7 @@ AutoComplete.prototype._initializeEventHandlers = function() {
   // Listen to input box's input event for typing callback
   this.dom.inputNode.addEventListener('input', function(event) {
     var text = event.currentTarget.value;
+    self.dropdown.reset();
     if (text === '') {
       self.dropdown.hide();
       return;
