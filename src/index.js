@@ -18,6 +18,7 @@
 var entries = require('../dictionary.json').data;
 var utils = require('./utils');
 var dom = require('./dom-helper');
+var Dropdown = require('./dropdown');
 
 var autocomplete = function(container, opt) {
   var autocompleteInstance = {
@@ -104,113 +105,6 @@ var autocomplete = function(container, opt) {
       inputNode.focus();
     }
   });
-  var createDropdown = function(items, opt) {
-    var dropdownInstance = {
-      state: {
-        indexOfFocusItem: -1
-      }
-    };
-    var ulNode = dom.createElement('ul', {
-      class: 'autocomplete-dropdown'
-    });
-    ulNode.style.display = 'none';
-
-    var show = function() {
-      ulNode.style.display = 'block';
-    };
-    var hide = function() {
-      ulNode.style.display = 'none';
-    };
-    var reset = function() {
-      dropdownInstance.state.indexOfFocusItem = -1;
-    };
-    var moveFocusTo = function(itemIdex) {};
-    var renderTo = function(refContainer) {
-      var refContainerWidth = refContainer.offsetWidth;
-      ulNode.style.width = refContainerWidth + 'px;';
-      dom.insertAfter(ulNode, refContainer);
-    };
-    var updateItems = function(items) {
-      // TODO: How to reuse liNodes?
-      // TODO: How to create liNode in memory at first?
-      if (!items) return;
-      // Remove all existing li nodes
-      ulNode.innerHTML = '';
-      var buffer = document.createDocumentFragment();
-      for (var c = 0; c < items.length; c++) {
-        var liNode = dom.createElement('li', {
-          text: items[c]
-        });
-        dom.setElementUUID(liNode, 'm.' + c);
-        // Event handlers for mouse pointer
-        liNode.addEventListener('mouseover', function(event) {
-          var self = event.currentTarget;
-          var uuid = dom.getElementUUID(self);
-          var index = parseInt(uuid.split('.')[1]);
-          dropdownInstance.state.indexOfFocusItem = index;
-          renderFocus();
-        });
-        liNode.addEventListener('mouseout', function(event) {
-          dropdownInstance.state.indexOfFocusItem = -1;
-          renderFocus();
-        });
-        liNode.addEventListener('click', function(event) {
-          if (opt && opt.onItemClick) {
-            var item = getCurrentItem();
-            opt.onItemClick({
-              index: dropdownInstance.state.indexOfFocusItem,
-              elem: item,
-              value: dom.getTextNodeFromElement(item)
-            });
-          }
-        });
-        buffer.appendChild(liNode);
-      }
-      ulNode.appendChild(buffer);
-    };
-    var renderFocus = function() {
-      var index = dropdownInstance.state.indexOfFocusItem;
-      for (var c = 0; c < ulNode.children.length; c++) {
-        if (index === c) {
-          ulNode.children[c].className = 'focus';
-        } else {
-          ulNode.children[c].className = '';
-        }
-      }
-    };
-    var moveToNextItem = function() {
-      if (dropdownInstance.state.indexOfFocusItem >= 25 - 1) {
-        dropdownInstance.state.indexOfFocusItem = 0;
-      } else {
-        dropdownInstance.state.indexOfFocusItem++;
-      }
-      renderFocus();
-    };
-    var moveToPreviousItem = function() {
-      if (dropdownInstance.state.indexOfFocusItem == 0) {
-        dropdownInstance.state.indexOfFocusItem = 25 - 1;
-      } else {
-        dropdownInstance.state.indexOfFocusItem--;
-      }
-      renderFocus();
-    };
-    var getCurrentItem = function() {
-      return ulNode.children[dropdownInstance.state.indexOfFocusItem];
-    };
-
-    updateItems(items);
-
-    dropdownInstance.show = show;
-    dropdownInstance.hide = hide;
-    dropdownInstance.reset = reset;
-    dropdownInstance.moveFocusTo = moveFocusTo;
-    dropdownInstance.renderTo = renderTo;
-    dropdownInstance.updateItems = updateItems;
-    dropdownInstance.moveToNextItem = moveToNextItem;
-    dropdownInstance.moveToPreviousItem = moveToPreviousItem;
-    dropdownInstance.getCurrentItem = getCurrentItem;
-    return dropdownInstance;
-  };
 
   var onTagSelect = function(itemText) {
     addTag(createTag(itemText));
@@ -222,7 +116,7 @@ var autocomplete = function(container, opt) {
   };
 
   // Create dropdown menu
-  var dropdown = createDropdown([], {
+  var dropdown = new Dropdown([], {
     onItemClick: function(item) {
       onTagSelect(item.value);
     }
