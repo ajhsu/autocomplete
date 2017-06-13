@@ -33,8 +33,12 @@ var dom = {
   /** Set UUID onto element by manual */
   setElementUUID: function(elem, uuid) {
     if (!elem) throw new Error('Unable to set UUID, element not exist.');
-    if (!elem.dataset)
-      throw new Error('Unable to set UUID, element have no dataset attribute.');
+    if (!elem.dataset) {
+      // While is the environmen that doesn't support HTML5 custom data attribute (like jsdom),
+      // We set the data-uuid attribute manually
+      elem.setAttribute('data-uuid', uuid);
+      return;
+    }
     if (!uuid) throw new Error('Unable to set UUID, uuid was not given.');
     elem.dataset.uuid = uuid;
   },
