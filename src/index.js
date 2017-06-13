@@ -19,7 +19,12 @@ var entries = require('../dictionary.json').data;
 var utils = require('./utils');
 var dom = require('./dom-helper');
 
-var autocomplete = function(container) {
+var autocomplete = function(container, opt) {
+  var autocompleteInstance = {
+    state: {
+      tags: []
+    }
+  };
   /* 
     Expected flow:
     * Get input DOM element
@@ -31,9 +36,6 @@ var autocomplete = function(container) {
     Besides:
     * Should be work both on mouse and keyboard
   */
-  var state = {
-    tags: []
-  };
   var createRootContainer = function() {
     var divNode = dom.createElement('div', {
       class: 'autocomplete-root-container'
@@ -64,8 +66,8 @@ var autocomplete = function(container) {
     closeButtonNode.addEventListener('click', function(event) {
       dom.removeElementByUUID(uuid);
       // Remove UUID from state
-      var tagIdx = state.tags.indexOf(uuid);
-      if (tagIdx >= 0) state.tags.splice(tagIdx, 1);
+      var tagIdx = autocompleteInstance.state.tags.indexOf(uuid);
+      if (tagIdx >= 0) autocompleteInstance.state.tags.splice(tagIdx, 1);
     });
     liNode.appendChild(closeButtonNode);
     return liNode;
@@ -78,8 +80,14 @@ var autocomplete = function(container) {
   };
   var addTag = function(tagNode) {
     // Push UUID into state
-    state.tags.push(dom.getElementUUID(tagNode));
+    autocompleteInstance.state.tags.push(dom.getElementUUID(tagNode));
     tagsContainerNode.appendChild(tagNode);
+  };
+  /** Return current tags label */
+  var getTags = function() {
+    return autocompleteInstance.state.tags.map(function(uuid) {
+      return dom.getTextNodeFromElement(dom.findElementByUUID(uuid));
+    });
   };
 
   var rootContainerNode = createRootContainer();
@@ -96,13 +104,12 @@ var autocomplete = function(container) {
       inputNode.focus();
     }
   });
-  var createDropdown = function(items, options) {
+  var createDropdown = function(items, opt) {
     var dropdownInstance = {
       state: {
         indexOfFocusItem: -1
       }
     };
-
     var ulNode = dom.createElement('ul', {
       class: 'autocomplete-dropdown'
     });
@@ -125,7 +132,7 @@ var autocomplete = function(container) {
     };
     var updateItems = function(items) {
       // TODO: How to reuse liNodes?
-      // TODO2: How to create liNode in memory at first?
+      // TODO: How to create liNode in memory at first?
       if (!items) return;
       // Remove all existing li nodes
       ulNode.innerHTML = '';
@@ -134,13 +141,33 @@ var autocomplete = function(container) {
         var liNode = dom.createElement('li', {
           text: items[c]
         });
-        liNode.addEventListener('mouseover', function(event) {});
-        liNode.addEventListener('mouseout', function(event) {});
+        dom.setElementUUID(liNode, 'm.' + c);
+        // Event handlers for mouse pointer
+        liNode.addEventListener('mouseover', function(event) {
+          var self = event.currentTarget;
+          var uuid = dom.getElementUUID(self);
+          var index = parseInt(uuid.split('.')[1]);
+          dropdownInstance.state.indexOfFocusItem = index;
+          renderFocus();
+        });
+        liNode.addEventListener('mouseout', function(event) {
+          dropdownInstance.state.indexOfFocusItem = -1;
+          renderFocus();
+        });
+        liNode.addEventListener('click', function(event) {
+          if (opt && opt.onItemClick) {
+            var item = getCurrentItem();
+            opt.onItemClick({
+              index: dropdownInstance.state.indexOfFocusItem,
+              elem: item,
+              value: dom.getTextNodeFromElement(item)
+            });
+          }
+        });
         buffer.appendChild(liNode);
       }
       ulNode.appendChild(buffer);
     };
-    var onSelectItem = function() {};
     var renderFocus = function() {
       var index = dropdownInstance.state.indexOfFocusItem;
       for (var c = 0; c < ulNode.children.length; c++) {
@@ -179,15 +206,27 @@ var autocomplete = function(container) {
     dropdownInstance.moveFocusTo = moveFocusTo;
     dropdownInstance.renderTo = renderTo;
     dropdownInstance.updateItems = updateItems;
-    dropdownInstance.onSelectItem = onSelectItem;
     dropdownInstance.moveToNextItem = moveToNextItem;
     dropdownInstance.moveToPreviousItem = moveToPreviousItem;
     dropdownInstance.getCurrentItem = getCurrentItem;
     return dropdownInstance;
   };
 
+  var onTagSelect = function(itemText) {
+    addTag(createTag(itemText));
+    // Clean up inputbox
+    inputNode.value = '';
+    // Reset dropdown menu
+    dropdown.hide();
+    dropdown.reset();
+  };
+
   // Create dropdown menu
-  var dropdown = createDropdown();
+  var dropdown = createDropdown([], {
+    onItemClick: function(item) {
+      onTagSelect(item.value);
+    }
+  });
 
   // Listen to input box's input event for typing callback
   inputNode.addEventListener('input', function(event) {
@@ -217,35 +256,23 @@ var autocomplete = function(container) {
         break;
       case 'Enter':
         // Add new tag
-        var itemText = dom.getTextNodeFromElement(dropdown.getCurrentItem());
-        addTag(createTag(itemText));
-        // Clean up inputbox
-        inputNode.value = '';
-        // Reset dropdown menu
-        dropdown.hide();
-        dropdown.reset();
+        var item = dropdown.getCurrentItem();
+        if (item) {
+          var itemText = dom.getTextNodeFromElement(item);
+          onTagSelect(itemText);
+        }
         break;
     }
   });
-
-  // Sample tags
-  addTag(createTag('Apple'));
-  addTag(createTag('Banana'));
-  addTag(createTag('Candy'));
 
   // Replace target container with a brand new root-container
   dom.renderTo(rootContainerNode, container);
   // Render dropdown to the input element
   dropdown.renderTo(rootContainerNode);
 
-  return {
-    /** Return current tags label */
-    getTags: function() {
-      return state.tags.map(function(uuid) {
-        return dom.getTextNodeFromElement(dom.findElementByUUID(uuid));
-      });
-    }
-  };
+  // Attach public methods
+  autocompleteInstance.getTags = getTags;
+  return autocompleteInstance;
 };
 
 module.exports = autocomplete;
