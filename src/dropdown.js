@@ -89,7 +89,7 @@ Dropdown.prototype.moveToNextItem = function() {
   this._renderFocus();
 };
 Dropdown.prototype.moveToPrevItem = function() {
-  if (this._state.indexOfFocusItem == 0) {
+  if (this._state.indexOfFocusItem <= 0) {
     this._state.indexOfFocusItem = this._state.countOfItems - 1;
   } else {
     this._state.indexOfFocusItem--;
